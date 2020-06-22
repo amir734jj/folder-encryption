@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Logic.Abstracts;
 using Logic.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Logic
 {
@@ -21,29 +22,31 @@ namespace Logic
             aes.Key = key.GetBytes(aes.KeySize / 8);
             aes.IV = key.GetBytes(aes.BlockSize / 8);
             aes.Padding = PaddingMode.PKCS7;
-            aes.Mode = CipherMode.CFB;
+            aes.Mode = CipherMode.CBC;
 
             var fileExtension = Path.GetExtension(inputFile);
             var fileName = Path.GetFileNameWithoutExtension(inputFile);
             var dirName = Path.GetDirectoryName(inputFile);
             var cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read);
-            var fsOut = new FileStream(dirName + "\\" + fileName, FileMode.Create);
+            var fsOut = new FileStream(Path.Join(dirName, fileName), FileMode.Create);
 
-            int read;
             var buffer = new byte[1048576];
 
             try
             {
+                int read;
                 while ((read = cs.Read(buffer, 0, buffer.Length)) > 0)
+                {
                     fsOut.Write(buffer, 0, read);
+                }
             }
             catch (CryptographicException exCryptographicException)
             {
-                ConsoleLog(LogType.Fatal, "CryptographicException error: " + exCryptographicException.Message);
+                Log(LogLevel.Critical, "CryptographicException error: " + exCryptographicException.Message);
             }
             catch (Exception ex)
             {
-                ConsoleLog(LogType.Error, "Error: " + ex.Message);
+                Log(LogLevel.Error, "Error: " + ex.Message);
             }
 
             try
@@ -52,16 +55,13 @@ namespace Logic
             }
             catch (Exception ex)
             {
-                ConsoleLog(LogType.Error, "Error by closing CryptoStream: " + ex.Message);
+                Log(LogLevel.Error, "Error by closing CryptoStream: " + ex.Message);
             }
             finally
             {
                 File.Delete(dirName + "\\" + fileName + fileExtension);
                 fsOut.Close();
                 fsCrypt.Close();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("success");
-                Console.ForegroundColor = ConsoleColor.White;
             }
         }
     }

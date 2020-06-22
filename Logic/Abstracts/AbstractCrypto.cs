@@ -7,7 +7,7 @@ namespace Logic.Abstracts
 {
     public class AbstractCrypto
     {
-        private static readonly ILogger Log = NullLogger.Instance;
+        private static readonly ILogger Logger = NullLogger.Instance;
 
         private readonly Random _random = new Random();
 
@@ -24,55 +24,12 @@ namespace Logic.Abstracts
             return data;
         }
 
-        protected enum LogType
+        protected void Log(LogLevel logType, string message)
         {
-            Info = 0,
-            Error,
-            Warn,
-            Debug,
-            Fatal
-        };
-
-        protected void ConsoleLog(LogType logType, string message)
-        {
-            switch (logType)
-            {
-                case LogType.Info:
-                {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Log.LogInformation(message);
-                }
-                    break;
-                case LogType.Debug:
-                {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Log.LogTrace(message);
-                }
-                    break;
-                case LogType.Error:
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Log.LogError(message);
-                }
-                    break;
-                case LogType.Fatal:
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Log.LogCritical(message);
-                }
-                    break;
-                case LogType.Warn:
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Log.LogWarning(message);
-                }
-                    break;
-            }
-
-            Console.ForegroundColor = ConsoleColor.White;
+            Logger.Log(logType, message);
         }
 
-        protected string GenerateKey(int bytes)
+        public string GenerateKey(int bytes)
         {
             var letters = new char[]
             {
