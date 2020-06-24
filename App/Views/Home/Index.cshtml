@@ -1,0 +1,54 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h2>Folder-Encryption utility</h2>
+    <p>
+        Select a folder to encrypt/decrypt
+    </p>
+
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#home">Welcome</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#encryption">Encryption</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#decryption">Decryption</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <h5>Select an action</h5>
+        </div>
+        <div id="encryption" class="tab-pane fade">
+
+
+            <div class="clearfix">
+                @using (Html.BeginForm("Encrypt", "Home", FormMethod.Post))
+                {
+                    <div class="form-group">
+                        <label for="email">Path</label>
+                        <input type="email" class="form-control" id="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email address:</label>
+                        <input type="email" class="form-control" id="email">
+                    </div>
+
+                    <input class="btn btn-primary" type="submit" value="Update"/>
+                }
+
+            </div>
+
+        </div>
+        <div id="decryption" class="tab-pane fade">
+            <h3>Menu 2</h3>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+        </div>
+    </div>
+</div>

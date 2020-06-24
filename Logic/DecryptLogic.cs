@@ -30,7 +30,7 @@ namespace Logic
             var cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read);
             var fsOut = new FileStream(Path.Join(dirName, fileName), FileMode.Create);
 
-            var buffer = new byte[1048576];
+            var buffer = new byte[1024 * 1024];
 
             try
             {
