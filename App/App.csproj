@@ -28,6 +28,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="wwwroot\*" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Lamar" Version="4.3.0" />
       <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="4.3.0" />
     </ItemGroup>
