@@ -15,7 +15,7 @@ namespace App.Controllers
             _cryptoManagement = cryptoManagement;
         }
 
-        [Route("{*url}")]
+        [Route("")]
         [HttpGet]
         public IActionResult Index()
         {
