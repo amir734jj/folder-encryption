@@ -32,5 +32,8 @@
       <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="4.3.0" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    </PropertyGroup>
 
 </Project>

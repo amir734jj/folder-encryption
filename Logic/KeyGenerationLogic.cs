@@ -10,7 +10,7 @@ namespace Logic
     {
         public string GenerateKey(CryptoRequest request)
         {
-            if (request.UnlockDate.GetValueOrDefault() - DateTime.Today < TimeSpan.Zero)
+            if (request.Action == CryptoAction.Encryption && request.UnlockDate.GetValueOrDefault() - DateTime.Today < TimeSpan.Zero)
             {
                 throw new ArgumentException("Key cannot get created because unlock date is not valid");
             }
