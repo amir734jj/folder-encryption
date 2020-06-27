@@ -28,7 +28,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="wwwroot\*" />
+        <Folder Include="wwwroot\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Folder>
     </ItemGroup>
 
     <ItemGroup>
