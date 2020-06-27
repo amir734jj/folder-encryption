@@ -45,6 +45,8 @@ namespace Logic
                 {
                     await fsOut.WriteAsync(buffer, 0, read);
                 }
+                
+                _logger.LogInformation($"Successfully decrypted: {fileName}");
             }
             catch (CryptographicException exCryptographicException)
             {

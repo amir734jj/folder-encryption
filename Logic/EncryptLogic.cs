@@ -47,6 +47,7 @@ namespace Logic
             
             await fsCrypt.WriteAsync(salt, 0, salt.Length);
 
+            var fileName = Path.GetFileNameWithoutExtension(inputFile);
             var cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write);
             var fsIn = new FileStream(inputFile, FileMode.Open);
             
@@ -57,10 +58,12 @@ namespace Logic
                 int read;
                 while ((read = fsIn.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    cs.Write(buffer, 0, read);
+                    await cs.WriteAsync(buffer, 0, read);
                 }
 
                 fsIn.Close();
+                
+                _logger.LogInformation($"Successfully encrypted: {fileName}");
             }
             catch (Exception ex)
             {
