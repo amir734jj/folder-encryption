@@ -1,15 +1,35 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using Logic.Abstracts;
+using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Logic
 {
-    public class EncryptLogic : AbstractCrypto, IEncryptLogic
+    public class EncryptLogic : IEncryptLogic
     {
-        public void AesEncrypt(string inputFile, string password, int blockSize)
+        private readonly ILogger<EncryptLogic> _logger;
+
+        public EncryptLogic(ILogger<EncryptLogic> logger)
+        {
+            _logger = logger;
+        }
+
+        private static byte[] GenerateRandomSalt()
+        {
+            var data = new byte[32];
+            using var rng = new RNGCryptoServiceProvider();
+
+            for (var i = 0; i < 10; i++)
+            {
+                rng.GetBytes(data);
+            }
+
+            return data;
+        }
+        
+        public async Task AesEncrypt(string inputFile, string password)
         {
             var salt = GenerateRandomSalt();
             var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
@@ -17,7 +37,7 @@ namespace Logic
 
             var aes = new RijndaelManaged
             {
-                KeySize = 256, BlockSize = blockSize, Padding = PaddingMode.PKCS7
+                KeySize = 256, BlockSize = 128, Padding = PaddingMode.PKCS7
             };
 
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
@@ -25,7 +45,7 @@ namespace Logic
             aes.IV = key.GetBytes(aes.BlockSize / 8);
             aes.Mode = CipherMode.CBC;
             
-            fsCrypt.Write(salt, 0, salt.Length);
+            await fsCrypt.WriteAsync(salt, 0, salt.Length);
 
             var cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write);
             var fsIn = new FileStream(inputFile, FileMode.Open);
@@ -44,7 +64,7 @@ namespace Logic
             }
             catch (Exception ex)
             {
-                Log(LogLevel.Error, "Error: " + ex.Message);
+                _logger.Log(LogLevel.Error, "Error: " + ex.Message);
             }
             finally
             {

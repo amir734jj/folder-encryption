@@ -1,15 +1,22 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using Logic.Abstracts;
+using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Logic
 {
-    public class DecryptLogic : AbstractCrypto, IDecryptLogic
+    public class DecryptLogic : IDecryptLogic
     {
-        public void AesDecrypt(string inputFile, string password, int blockSize)
+        private readonly ILogger<DecryptLogic> _logger;
+
+        public DecryptLogic(ILogger<DecryptLogic> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task AesDecrypt(string inputFile, string password)
         {
             var passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
             var salt = new byte[32];
@@ -17,14 +24,13 @@ namespace Logic
             var fsCrypt = new FileStream(inputFile, FileMode.Open);
             fsCrypt.Read(salt, 0, salt.Length);
 
-            var aes = new RijndaelManaged {KeySize = 256, BlockSize = blockSize};
+            var aes = new RijndaelManaged {KeySize = 256, BlockSize = 128};
             var key = new Rfc2898DeriveBytes(passwordBytes, salt, 50000);
             aes.Key = key.GetBytes(aes.KeySize / 8);
             aes.IV = key.GetBytes(aes.BlockSize / 8);
             aes.Padding = PaddingMode.PKCS7;
             aes.Mode = CipherMode.CBC;
 
-            var fileExtension = Path.GetExtension(inputFile);
             var fileName = Path.GetFileNameWithoutExtension(inputFile);
             var dirName = Path.GetDirectoryName(inputFile);
             var cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read);
@@ -37,16 +43,16 @@ namespace Logic
                 int read;
                 while ((read = cs.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    fsOut.Write(buffer, 0, read);
+                    await fsOut.WriteAsync(buffer, 0, read);
                 }
             }
             catch (CryptographicException exCryptographicException)
             {
-                Log(LogLevel.Critical, "CryptographicException error: " + exCryptographicException.Message);
+                _logger.Log(LogLevel.Critical, "CryptographicException error: " + exCryptographicException.Message);
             }
             catch (Exception ex)
             {
-                Log(LogLevel.Error, "Error: " + ex.Message);
+                _logger.Log(LogLevel.Error, "Error: " + ex.Message);
             }
 
             try
@@ -55,11 +61,11 @@ namespace Logic
             }
             catch (Exception ex)
             {
-                Log(LogLevel.Error, "Error by closing CryptoStream: " + ex.Message);
+                _logger.Log(LogLevel.Error, "Error by closing CryptoStream: " + ex.Message);
             }
             finally
             {
-                File.Delete(dirName + "\\" + fileName + fileExtension);
+                File.Delete(inputFile);
                 fsOut.Close();
                 fsCrypt.Close();
             }

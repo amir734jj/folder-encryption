@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace Logic.Interfaces
 {
     public interface IDecryptLogic
     {
-        void AesDecrypt(string inputFile, string password, int blockSize);
+        Task AesDecrypt(string inputFile, string key);
     }
 }

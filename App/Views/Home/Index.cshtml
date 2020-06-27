@@ -1,6 +1,7 @@
 @{
     Layout = "_Layout";
 }
+@model Models.CryptoRequest
 
 <div class="container">
     <h2>Folder-Encryption utility</h2>
@@ -22,33 +23,58 @@
 
     <div class="tab-content">
         <div id="home" class="tab-pane fade in active">
-            <h5>Select an action</h5>
+            <div class="top-margin">
+                <h5>Select an action</h5>
+                <p>
+                    Write a folder path, password and when encryption can be unlocked
+                </p>
+            </div>
         </div>
         <div id="encryption" class="tab-pane fade">
-
-
-            <div class="clearfix">
+            <div class="top-margin">
                 @using (Html.BeginForm("Encrypt", "Home", FormMethod.Post))
                 {
                     <div class="form-group">
-                        <label for="email">Path</label>
-                        <input type="email" class="form-control" id="email">
+                        @Html.LabelFor(x => x.Path)
+                        @Html.TextBoxFor(x => x.Path, new {@class = "form-control", type = "text", placeholder = "Enter Path", required = "required"})
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email address:</label>
-                        <input type="email" class="form-control" id="email">
+                        @Html.LabelFor(x => x.Password)
+                        @Html.TextBoxFor(x => x.Password, new {@class = "form-control", type = "password", placeholder = "Enter Password", required = "required"})
                     </div>
 
-                    <input class="btn btn-primary" type="submit" value="Update"/>
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.UnlockDate)
+                        @Html.TextBoxFor(model => model.UnlockDate, new {type = "date", @class = "form-control datepicker", required = "required"})
+                    </div>
+
+                    <input class="btn btn-primary" type="submit" value="Encrypt"/>
                 }
-
             </div>
-
         </div>
         <div id="decryption" class="tab-pane fade">
-            <h3>Menu 2</h3>
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+            <div class="top-margin">
+                @using (Html.BeginForm("Decrypt", "Home", FormMethod.Post))
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.Path)
+                        @Html.TextBoxFor(x => x.Path, new {@class = "form-control", type = "text", placeholder = "Enter Path", required = "required"})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.Password)
+                        @Html.TextBoxFor(x => x.Password, new {@class = "form-control", type = "password", placeholder = "Enter Password", required = "required"})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(x => x.UnlockDate)
+                        @Html.TextBoxFor(model => model.UnlockDate, new {type = "date", @class = "form-control datepicker", required = "required"})
+                    </div>
+
+                    <input class="btn btn-primary" type="submit" value="Decrypt"/>
+                }
+            </div>
         </div>
     </div>
 </div>
