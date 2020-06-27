@@ -1,3 +1,4 @@
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using Logic.Interfaces;
@@ -9,6 +10,11 @@ namespace Logic
     {
         public string GenerateKey(CryptoRequest request)
         {
+            if (request.UnlockDate.GetValueOrDefault() - DateTime.Today < TimeSpan.Zero)
+            {
+                throw new ArgumentException("Key cannot get created because unlock date is not valid");
+            }
+            
             using var sha256Hash = SHA256.Create();
 
             // Convert the input string to a byte array and compute the hash.

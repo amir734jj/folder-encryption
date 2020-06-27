@@ -8,7 +8,7 @@ namespace Models
         
         public string Password { get; set; }
         
-        public DateTime? UnlockDate { get; set; }
+        public DateTime? UnlockDate { get; set; } = DateTime.Today.AddDays(1);
         
         public CryptoAction? Action { get; set; }
     }
