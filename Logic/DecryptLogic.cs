@@ -36,6 +36,8 @@ namespace Logic
             var cs = new CryptoStream(fsCrypt, aes.CreateDecryptor(), CryptoStreamMode.Read);
             var fsOut = new FileStream(Path.Join(dirName, fileName), FileMode.Create);
 
+            _logger.LogInformation($"Started decryption of: {fileName}");
+            
             var buffer = new byte[1024 * 1024];
 
             try

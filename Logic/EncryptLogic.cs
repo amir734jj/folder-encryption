@@ -51,6 +51,8 @@ namespace Logic
             var cs = new CryptoStream(fsCrypt, aes.CreateEncryptor(), CryptoStreamMode.Write);
             var fsIn = new FileStream(inputFile, FileMode.Open);
             
+            _logger.LogInformation($"Started encryption of: {fileName}");
+            
             var buffer = new byte[1024*1024];
 
             try
